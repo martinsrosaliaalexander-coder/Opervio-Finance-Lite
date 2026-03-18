@@ -37,13 +37,6 @@ import {
   Bar,
 } from "recharts";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 const initialTransactions = [
   {
     id: 1,
@@ -126,7 +119,11 @@ function monthLabel(monthNumber: number) {
   return labels[monthNumber - 1] || "";
 }
 
+type Tone = "emerald" | "rose" | "blue" | "amber";
+type TabKey = "dashboard" | "lancamentos" | "relatorios";
+
 export default function OpervioFinanceLiteApp() {
+  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [isLogged, setIsLogged] = useState(false);
   const [loginForm] = useState({ email: "admin@opervio.com", password: "123456" });
   const [loginInput, setLoginInput] = useState({ email: "admin@opervio.com", password: "123456" });
@@ -322,39 +319,42 @@ export default function OpervioFinanceLiteApp() {
             </div>
 
             <div>
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-blue-950/20">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Lock className="h-5 w-5 text-blue-300" />
-                    Entrar no sistema
+                  <CardTitle>
+                    <div className="flex items-center gap-2 text-xl">
+                      <Lock className="h-5 w-5 text-blue-300" />
+                      Entrar no sistema
+                    </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-2">
-                    <Label>E-mail</Label>
-                    <div className="relative">
-                      <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                      <Input
-                        value={loginInput.email}
-                        onChange={(e) => setLoginInput((prev) => ({ ...prev, email: e.target.value }))}
-                        className="border-slate-800 bg-slate-950/80 pl-10"
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid gap-2">
+                      <Label>E-mail</Label>
+                      <div className="relative">
+                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                        <TextInput
+                          value={loginInput.email}
+                          onChange={(e) => setLoginInput((prev) => ({ ...prev, email: e.target.value }))}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Senha</Label>
+                      <TextInput
+                        type="password"
+                        value={loginInput.password}
+                        onChange={(e) => setLoginInput((prev) => ({ ...prev, password: e.target.value }))}
                       />
                     </div>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Senha</Label>
-                    <Input
-                      type="password"
-                      value={loginInput.password}
-                      onChange={(e) => setLoginInput((prev) => ({ ...prev, password: e.target.value }))}
-                      className="border-slate-800 bg-slate-950/80"
-                    />
-                  </div>
-                  <Button onClick={handleLogin} className="h-12 w-full rounded-2xl bg-blue-600 hover:bg-blue-500">
-                    Acessar dashboard
-                  </Button>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-400">
-                    Demo: admin@opervio.com / 123456
+                    <PrimaryButton onClick={handleLogin} className="w-full">
+                      Acessar dashboard
+                    </PrimaryButton>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-400">
+                      Demo: admin@opervio.com / 123456
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -370,50 +370,56 @@ export default function OpervioFinanceLiteApp() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.12),transparent_20%)]" />
       <div className="relative mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-blue-950/20">
-            <CardContent className="p-6 md:p-8">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
-                <Wallet className="h-4 w-4" />
-                Opervio Finance Lite
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight md:text-5xl">Painel financeiro simples, bonito e vendável.</h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                Um produto-base para autônomos, pequenos negócios e clientes da Opervio acompanharem o caixa com clareza e visual profissional.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Badge>Login</Badge>
-                <Badge>Dashboard</Badge>
-                <Badge>Relatórios</Badge>
-                <Badge>PDF</Badge>
-                <Badge>Exportação</Badge>
+          <Card>
+            <CardContent>
+              <div className="p-6 md:p-8">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
+                  <Wallet className="h-4 w-4" />
+                  Opervio Finance Lite
+                </div>
+                <h1 className="text-3xl font-bold tracking-tight md:text-5xl">Painel financeiro simples, bonito e vendável.</h1>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+                  Um produto-base para autônomos, pequenos negócios e clientes da Opervio acompanharem o caixa com clareza e visual profissional.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Badge>Login</Badge>
+                  <Badge>Dashboard</Badge>
+                  <Badge>Relatórios</Badge>
+                  <Badge>PDF</Badge>
+                  <Badge>Exportação</Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-slate-800 bg-gradient-to-br from-emerald-500/10 to-slate-900 backdrop-blur-xl shadow-2xl shadow-emerald-950/20">
-            <CardContent className="flex h-full flex-col justify-between p-6">
-              <div>
-                <div className="mb-3 inline-flex rounded-xl bg-emerald-500/15 p-3 text-emerald-300">
-                  <BarChart3 className="h-5 w-5" />
+          <Card className="bg-gradient-to-br from-emerald-500/10 to-slate-900">
+            <CardContent>
+              <div className="flex h-full flex-col justify-between p-6">
+                <div>
+                  <div className="mb-3 inline-flex rounded-xl bg-emerald-500/15 p-3 text-emerald-300">
+                    <BarChart3 className="h-5 w-5" />
+                  </div>
+                  <h2 className="text-xl font-semibold">Visão geral</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    Base ideal para evoluir para versão Pro com banco de dados, multiusuário e cobrança recorrente.
+                  </p>
                 </div>
-                <h2 className="text-xl font-semibold">Visão geral</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-300">Base ideal para evoluir para versão Pro com banco de dados, multiusuário e cobrança recorrente.</p>
-              </div>
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Saldo atual</div>
-                  <div className="mt-2 text-3xl font-bold text-emerald-300">{money(totals.balance)}</div>
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={exportPDF} className="flex-1 rounded-2xl bg-blue-600 hover:bg-blue-500">
-                    <FileText className="mr-2 h-4 w-4" /> PDF
-                  </Button>
-                  <Button onClick={exportJSON} variant="outline" className="flex-1 rounded-2xl border-slate-700 bg-slate-950/50">
-                    <Download className="mr-2 h-4 w-4" /> JSON
-                  </Button>
-                  <Button onClick={handleLogout} variant="ghost" className="rounded-2xl border border-slate-800 bg-slate-950/50">
-                    <LogOut className="h-4 w-4" />
-                  </Button>
+                <div className="mt-5 grid gap-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                    <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Saldo atual</div>
+                    <div className="mt-2 text-3xl font-bold text-emerald-300">{money(totals.balance)}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <PrimaryButton onClick={exportPDF} className="flex-1">
+                      <FileText className="mr-2 h-4 w-4" /> PDF
+                    </PrimaryButton>
+                    <OutlineButton onClick={exportJSON} className="flex-1">
+                      <Download className="mr-2 h-4 w-4" /> JSON
+                    </OutlineButton>
+                    <GhostButton onClick={handleLogout}>
+                      <LogOut className="h-4 w-4" />
+                    </GhostButton>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -427,210 +433,225 @@ export default function OpervioFinanceLiteApp() {
           <SummaryCard title="Pendências" value={money(totals.pending)} icon={<Receipt className="h-5 w-5" />} tone="amber" />
         </div>
 
-        <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-1">
-            <TabsTrigger value="dashboard" className="rounded-xl">Dashboard</TabsTrigger>
-            <TabsTrigger value="lancamentos" className="rounded-xl">Lançamentos</TabsTrigger>
-            <TabsTrigger value="relatorios" className="rounded-xl">Relatórios</TabsTrigger>
-          </TabsList>
+        <div className="space-y-6">
+          <div className="grid w-full grid-cols-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-1">
+            <TabButton active={activeTab === "dashboard"} onClick={() => setActiveTab("dashboard")}>Dashboard</TabButton>
+            <TabButton active={activeTab === "lancamentos"} onClick={() => setActiveTab("lancamentos")}>Lançamentos</TabButton>
+            <TabButton active={activeTab === "relatorios"} onClick={() => setActiveTab("relatorios")}>Relatórios</TabButton>
+          </div>
 
-          <TabsContent value="dashboard" className="space-y-6">
-            <div className="grid gap-6 xl:grid-cols-2">
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <BarChart3 className="h-5 w-5 text-blue-300" />
-                    Evolução mensal do caixa
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[320px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                      <XAxis dataKey="label" stroke="#94a3b8" />
-                      <YAxis stroke="#94a3b8" />
-                      <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
-                      <Line type="monotone" dataKey="entradas" stroke="#10b981" strokeWidth={3} />
-                      <Line type="monotone" dataKey="saidas" stroke="#ef4444" strokeWidth={3} />
-                      <Line type="monotone" dataKey="saldo" stroke="#3b82f6" strokeWidth={3} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+          {activeTab === "dashboard" && (
+            <div className="space-y-6">
+              <div className="grid gap-6 xl:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="flex items-center gap-2 text-xl">
+                        <BarChart3 className="h-5 w-5 text-blue-300" />
+                        Evolução mensal do caixa
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[320px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={monthlyData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                          <XAxis dataKey="label" stroke="#94a3b8" />
+                          <YAxis stroke="#94a3b8" />
+                          <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
+                          <Line type="monotone" dataKey="entradas" stroke="#10b981" strokeWidth={3} />
+                          <Line type="monotone" dataKey="saidas" stroke="#ef4444" strokeWidth={3} />
+                          <Line type="monotone" dataKey="saldo" stroke="#3b82f6" strokeWidth={3} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <PieChartIcon className="h-5 w-5 text-amber-300" />
-                    Despesas por categoria
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[320px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={expensesByCategory} dataKey="value" nameKey="name" innerRadius={60} outerRadius={100} paddingAngle={3}>
-                        {expensesByCategory.map((entry, index) => (
-                          <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="flex items-center gap-2 text-xl">
+                        <PieChartIcon className="h-5 w-5 text-amber-300" />
+                        Despesas por categoria
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[320px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={expensesByCategory} dataKey="value" nameKey="name" innerRadius={60} outerRadius={100} paddingAngle={3}>
+                            {expensesByCategory.map((entry, index) => (
+                              <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid gap-6 xl:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="flex items-center gap-2 text-xl">
+                        <Users className="h-5 w-5 text-emerald-300" />
+                        Top clientes por receita
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[320px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={topClients} layout="vertical" margin={{ left: 10, right: 10 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                          <XAxis type="number" stroke="#94a3b8" />
+                          <YAxis type="category" dataKey="client" stroke="#94a3b8" width={110} />
+                          <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
+                          <Bar dataKey="total" radius={[0, 10, 10, 0]} fill="#10b981" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="flex items-center gap-2 text-xl">
+                        <Calendar className="h-5 w-5 text-blue-300" />
+                        Resumo operacional
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <InfoRow label="Total de lançamentos" value={String(transactions.length)} />
+                      <InfoRow label="Entradas registradas" value={String(transactions.filter((t) => t.type === "entrada").length)} />
+                      <InfoRow label="Saídas registradas" value={String(transactions.filter((t) => t.type === "saida").length)} />
+                      <InfoRow label="Receitas pendentes" value={money(transactions.filter((t) => t.status === "pendente").reduce((a, b) => a + b.amount, 0))} />
+                      <InfoRow label="Maior cliente" value={topClients[0]?.client || "—"} />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
+          )}
 
-            <div className="grid gap-6 xl:grid-cols-2">
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Users className="h-5 w-5 text-emerald-300" />
-                    Top clientes por receita
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[320px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topClients} layout="vertical" margin={{ left: 10, right: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                      <XAxis type="number" stroke="#94a3b8" />
-                      <YAxis type="category" dataKey="client" stroke="#94a3b8" width={110} />
-                      <Tooltip contentStyle={{ background: "#020617", border: "1px solid #1e293b", borderRadius: 16 }} />
-                      <Bar dataKey="total" radius={[0, 10, 10, 0]} fill="#10b981" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Calendar className="h-5 w-5 text-blue-300" />
-                    Resumo operacional
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <InfoRow label="Total de lançamentos" value={String(transactions.length)} />
-                  <InfoRow label="Entradas registradas" value={String(transactions.filter((t) => t.type === "entrada").length)} />
-                  <InfoRow label="Saídas registradas" value={String(transactions.filter((t) => t.type === "saida").length)} />
-                  <InfoRow label="Receitas pendentes" value={money(transactions.filter((t) => t.status === "pendente").reduce((a, b) => a + b.amount, 0))} />
-                  <InfoRow label="Maior cliente" value={topClients[0]?.client || "—"} />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="lancamentos" className="space-y-6">
+          {activeTab === "lancamentos" && (
             <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Plus className="h-5 w-5 text-blue-300" />
-                    Novo lançamento
+                  <CardTitle>
+                    <div className="flex items-center gap-2 text-xl">
+                      <Plus className="h-5 w-5 text-blue-300" />
+                      Novo lançamento
+                    </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label>Descrição</Label>
-                    <Input
-                      value={form.description}
-                      onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-                      placeholder="Ex.: Pagamento cliente X"
-                      className="border-slate-800 bg-slate-950/80"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Cliente / origem</Label>
-                    <Input
-                      value={form.client}
-                      onChange={(e) => setForm((prev) => ({ ...prev, client: e.target.value }))}
-                      placeholder="Ex.: Clínica Bella Vita"
-                      className="border-slate-800 bg-slate-950/80"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+                <CardContent>
+                  <div className="grid gap-4">
                     <div className="grid gap-2">
-                      <Label>Valor</Label>
-                      <Input
-                        type="number"
-                        value={form.amount}
-                        onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
-                        placeholder="0,00"
-                        className="border-slate-800 bg-slate-950/80"
+                      <Label>Descrição</Label>
+                      <TextInput
+                        value={form.description}
+                        onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                        placeholder="Ex.: Pagamento cliente X"
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label>Data</Label>
-                      <Input
-                        type="date"
-                        value={form.date}
-                        onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))}
-                        className="border-slate-800 bg-slate-950/80"
+                      <Label>Cliente / origem</Label>
+                      <TextInput
+                        value={form.client}
+                        onChange={(e) => setForm((prev) => ({ ...prev, client: e.target.value }))}
+                        placeholder="Ex.: Clínica Bella Vita"
                       />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label>Tipo</Label>
-                      <Select value={form.type} onValueChange={(value) => setForm((prev) => ({ ...prev, type: value }))}>
-                        <SelectTrigger className="border-slate-800 bg-slate-950/80">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="entrada">Entrada</SelectItem>
-                          <SelectItem value="saida">Saída</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label>Valor</Label>
+                        <TextInput
+                          type="number"
+                          value={form.amount}
+                          onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
+                          placeholder="0,00"
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Data</Label>
+                        <TextInput
+                          type="date"
+                          value={form.date}
+                          onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label>Tipo</Label>
+                        <NativeSelect
+                          value={form.type}
+                          onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
+                          options={[
+                            { value: "entrada", label: "Entrada" },
+                            { value: "saida", label: "Saída" },
+                          ]}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Status</Label>
+                        <NativeSelect
+                          value={form.status}
+                          onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}
+                          options={[
+                            { value: "recebido", label: "Recebido" },
+                            { value: "pendente", label: "Pendente" },
+                            { value: "pago", label: "Pago" },
+                          ]}
+                        />
+                      </div>
                     </div>
                     <div className="grid gap-2">
-                      <Label>Status</Label>
-                      <Select value={form.status} onValueChange={(value) => setForm((prev) => ({ ...prev, status: value }))}>
-                        <SelectTrigger className="border-slate-800 bg-slate-950/80">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="recebido">Recebido</SelectItem>
-                          <SelectItem value="pendente">Pendente</SelectItem>
-                          <SelectItem value="pago">Pago</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label>Categoria</Label>
+                      <NativeSelect
+                        value={form.category}
+                        onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                        options={categories.map((category) => ({ value: category, label: category }))}
+                      />
                     </div>
+                    <PrimaryButton onClick={handleAddTransaction}>
+                      Adicionar lançamento
+                    </PrimaryButton>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>Categoria</Label>
-                    <Select value={form.category} onValueChange={(value) => setForm((prev) => ({ ...prev, category: value }))}>
-                      <SelectTrigger className="border-slate-800 bg-slate-950/80">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>{category}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button onClick={handleAddTransaction} className="mt-2 h-12 rounded-2xl bg-blue-600 text-white hover:bg-blue-500">
-                    Adicionar lançamento
-                  </Button>
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-                <CardHeader className="gap-4">
+              <Card>
+                <CardHeader>
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <CardTitle className="text-xl">Lançamentos</CardTitle>
+                    <CardTitle>Lançamentos</CardTitle>
                     <div className="flex flex-col gap-3 md:flex-row">
                       <div className="relative min-w-[220px]">
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                        <Input
+                        <TextInput
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
                           placeholder="Buscar descrição, categoria ou cliente"
-                          className="border-slate-800 bg-slate-950/80 pl-10"
+                          className="pl-10"
                         />
                       </div>
                       <div className="flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-950/70 px-3">
                         <Filter className="h-4 w-4 text-slate-500" />
-                        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="h-10 bg-transparent text-sm text-slate-200 outline-none">
+                        <select
+                          value={filterType}
+                          onChange={(e) => setFilterType(e.target.value)}
+                          className="h-10 bg-transparent text-sm text-slate-200 outline-none"
+                        >
                           <option value="todos">Todos</option>
                           <option value="entrada">Entradas</option>
                           <option value="saida">Saídas</option>
@@ -638,10 +659,16 @@ export default function OpervioFinanceLiteApp() {
                       </div>
                       <div className="flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-950/70 px-3">
                         <Calendar className="h-4 w-4 text-slate-500" />
-                        <select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} className="h-10 bg-transparent text-sm text-slate-200 outline-none">
+                        <select
+                          value={monthFilter}
+                          onChange={(e) => setMonthFilter(e.target.value)}
+                          className="h-10 bg-transparent text-sm text-slate-200 outline-none"
+                        >
                           <option value="todos">Todos os meses</option>
                           {Array.from({ length: 12 }).map((_, i) => (
-                            <option key={i + 1} value={String(i + 1)}>{monthLabel(i + 1)}</option>
+                            <option key={i + 1} value={String(i + 1)}>
+                              {monthLabel(i + 1)}
+                            </option>
                           ))}
                         </select>
                       </div>
@@ -665,9 +692,9 @@ export default function OpervioFinanceLiteApp() {
                           {item.type === "entrada" ? "+" : "-"} {money(item.amount)}
                         </div>
                         <div className="flex justify-end">
-                          <Button variant="ghost" size="icon" onClick={() => deleteTransaction(item.id)} className="rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
+                          <GhostButton onClick={() => deleteTransaction(item.id)}>
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </GhostButton>
                         </div>
                       </div>
                     ))}
@@ -680,61 +707,200 @@ export default function OpervioFinanceLiteApp() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
+          )}
 
-          <TabsContent value="relatorios" className="space-y-6">
+          {activeTab === "relatorios" && (
             <div className="grid gap-6 xl:grid-cols-2">
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <FileText className="h-5 w-5 text-blue-300" />
-                    Relatório executivo
+                  <CardTitle>
+                    <div className="flex items-center gap-2 text-xl">
+                      <FileText className="h-5 w-5 text-blue-300" />
+                      Relatório executivo
+                    </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 text-sm text-slate-300">
-                  <ReportLine label="Receita total" value={money(totals.income)} />
-                  <ReportLine label="Despesa total" value={money(totals.expense)} />
-                  <ReportLine label="Saldo operacional" value={money(totals.balance)} />
-                  <ReportLine label="Pendências" value={money(totals.pending)} />
-                  <ReportLine label="Quantidade de lançamentos" value={String(transactions.length)} />
-                  <div className="pt-4">
-                    <Button onClick={exportPDF} className="h-11 rounded-2xl bg-blue-600 hover:bg-blue-500">
-                      <FileText className="mr-2 h-4 w-4" />
-                      Gerar relatório PDF
-                    </Button>
+                <CardContent>
+                  <div className="space-y-4 text-sm text-slate-300">
+                    <ReportLine label="Receita total" value={money(totals.income)} />
+                    <ReportLine label="Despesa total" value={money(totals.expense)} />
+                    <ReportLine label="Saldo operacional" value={money(totals.balance)} />
+                    <ReportLine label="Pendências" value={money(totals.pending)} />
+                    <ReportLine label="Quantidade de lançamentos" value={String(transactions.length)} />
+                    <div className="pt-4">
+                      <PrimaryButton onClick={exportPDF}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Gerar relatório PDF
+                      </PrimaryButton>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Download className="h-5 w-5 text-emerald-300" />
-                    Exportação e continuidade
+                  <CardTitle>
+                    <div className="flex items-center gap-2 text-xl">
+                      <Download className="h-5 w-5 text-emerald-300" />
+                      Exportação e continuidade
+                    </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 text-sm text-slate-300">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
-                    Os dados ficam salvos localmente no navegador durante esta demo.
+                <CardContent>
+                  <div className="space-y-4 text-sm text-slate-300">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
+                      Os dados ficam salvos localmente no navegador durante esta demo.
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
+                      Na versão real, isso será substituído por banco de dados e autenticação segura.
+                    </div>
+                    <OutlineButton onClick={exportJSON}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Exportar backup JSON
+                    </OutlineButton>
                   </div>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
-                    Na versão real, isso será substituído por banco de dados e autenticação segura.
-                  </div>
-                  <Button onClick={exportJSON} variant="outline" className="h-11 rounded-2xl border-slate-700 bg-slate-950/50">
-                    <Download className="mr-2 h-4 w-4" />
-                    Exportar backup JSON
-                  </Button>
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function SummaryCard({ title, value, icon, tone }: { title: string; value: string; icon: React.ReactNode; tone: "emerald" | "rose" | "blue" | "amber" }) {
+function Card({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`rounded-3xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-blue-950/20 ${className}`}>{children}</div>;
+}
+
+function CardHeader({ children }: { children: React.ReactNode }) {
+  return <div className="p-6 pb-0">{children}</div>;
+}
+
+function CardContent({ children }: { children: React.ReactNode }) {
+  return <div className="p-6">{children}</div>;
+}
+
+function CardTitle({ children }: { children: React.ReactNode }) {
+  return <div className="text-xl font-semibold">{children}</div>;
+}
+
+function TextInput({
+  className = "",
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className={`h-11 w-full rounded-2xl border border-slate-800 bg-slate-950/80 px-4 text-slate-100 outline-none placeholder:text-slate-500 focus:border-slate-600 ${className}`}
+    />
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return <label className="text-sm font-medium text-slate-300">{children}</label>;
+}
+
+function NativeSelect({
+  options,
+  className = "",
+  ...props
+}: React.SelectHTMLAttributes<HTMLSelectElement> & {
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <select
+      {...props}
+      className={`h-11 w-full rounded-2xl border border-slate-800 bg-slate-950/80 px-4 text-slate-100 outline-none focus:border-slate-600 ${className}`}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function PrimaryButton({
+  children,
+  className = "",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      {...props}
+      className={`inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-4 font-medium text-white hover:bg-blue-500 disabled:opacity-50 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function OutlineButton({
+  children,
+  className = "",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      {...props}
+      className={`inline-flex h-12 items-center justify-center rounded-2xl border border-slate-700 bg-slate-950/50 px-4 font-medium text-slate-100 hover:bg-slate-900 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function GhostButton({
+  children,
+  className = "",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      {...props}
+      className={`inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950/50 px-3 text-slate-300 hover:bg-slate-800 hover:text-white ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function TabButton({
+  children,
+  active,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+  return (
+    <button
+      {...props}
+      className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+        active ? "bg-slate-100 text-slate-900" : "text-slate-300 hover:bg-slate-800"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SummaryCard({
+  title,
+  value,
+  icon,
+  tone,
+}: {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  tone: Tone;
+}) {
   const toneMap = {
     emerald: "from-emerald-500/15 to-slate-900 text-emerald-300",
     rose: "from-rose-500/15 to-slate-900 text-rose-300",
@@ -742,13 +908,11 @@ function SummaryCard({ title, value, icon, tone }: { title: string; value: strin
     amber: "from-amber-500/15 to-slate-900 text-amber-300",
   };
   return (
-    <Card className={`border-slate-800 bg-gradient-to-br ${toneMap[tone]} backdrop-blur-xl`}>
-      <CardContent className="p-5">
-        <div className="mb-4 inline-flex rounded-2xl bg-slate-950/40 p-3">{icon}</div>
-        <div className="text-sm text-slate-400">{title}</div>
-        <div className="mt-2 text-2xl font-bold tracking-tight text-slate-50">{value}</div>
-      </CardContent>
-    </Card>
+    <div className={`rounded-3xl border border-slate-800 bg-gradient-to-br ${toneMap[tone]} p-5 backdrop-blur-xl`}>
+      <div className="mb-4 inline-flex rounded-2xl bg-slate-950/40 p-3">{icon}</div>
+      <div className="text-sm text-slate-400">{title}</div>
+      <div className="mt-2 text-2xl font-bold tracking-tight text-slate-50">{value}</div>
+    </div>
   );
 }
 
