@@ -67,3 +67,4 @@ Esta versão já está pronta para funcionar online com Supabase + Vercel. O pr�
 - anexos
 - edição de lançamentos
 - contas a pagar e receber separadas
+- force rebuild
